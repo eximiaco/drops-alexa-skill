@@ -1,0 +1,4 @@
+ask-sdk
+boto3
+requests
+whoosh

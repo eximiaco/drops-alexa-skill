@@ -1,0 +1,119 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+Description: >
+  Sample SAM Template for Eximia Drops
+
+Globals:
+  Function:
+    Timeout: 10
+    MemorySize: 128
+
+Parameters:
+  AlexaSkillId:
+    Description: Alexa Skill ID
+    Type: String
+
+  SNSTopicName:
+    Description: O nome do SNS topic
+    Type: String
+
+Resources:
+  PlayerFunction:
+    Type: AWS::Serverless::Function 
+    Properties:
+      CodeUri: player/
+      Handler: app.lambda_handler
+      Runtime: python3.7
+      Environment:
+        Variables:
+          NOTIFICATIONS_TOPIC_ARN: !Ref NotificationTopic
+          STREAMING_TABLE_NAME: !Ref StreamingStateTable
+      Policies: 
+        - DynamoDBReadPolicy:
+            TableName: !Ref EpisodesTable
+        - AmazonDynamoDBFullAccess
+        - SNSPublishMessagePolicy:
+            TopicName: !GetAtt NotificationTopic.TopicName
+      Events:
+        AlexaSkillEvent:
+          Type: AlexaSkill
+          Properties:
+            SkillId: !Ref AlexaSkillId
+      Tags:
+        Application: DropsEximiaCo
+
+  CrawlerFunction:
+    Type: AWS::Serverless::Function 
+    Properties:
+      CodeUri: crawler/
+      Handler: app.lambda_handler
+      Runtime: python3.7
+      Environment:
+        Variables:
+          FEED_URI: https://feeds.soundcloud.com/users/soundcloud:users:784875019/sounds.rss
+          NOTIFICATIONS_TOPIC_ARN: !Ref NotificationTopic
+      Policies: 
+        - DynamoDBCrudPolicy:
+            TableName: !Ref EpisodesTable
+        - SNSPublishMessagePolicy:
+            TopicName: !GetAtt NotificationTopic.TopicName
+      Events:
+        Scheduled:
+          Type: Schedule
+          Properties:
+            Schedule: "cron(0/60 * * * ? *)"
+            Enabled: True
+      Tags:
+        Application: DropsEximiaCo
+
+  EpisodesTable:
+    Type: AWS::DynamoDB::Table
+    Properties: 
+      AttributeDefinitions: 
+        - AttributeName: "category"
+          AttributeType: "S"
+        - AttributeName: "pub"
+          AttributeType: "S"
+      KeySchema: 
+        - AttributeName: "category"
+          KeyType: "HASH"
+        - AttributeName: "pub"
+          KeyType: "RANGE"
+      TableName: EximiaDropsEpisodes
+      BillingMode: PAY_PER_REQUEST
+      Tags:
+        - Key: Application
+          Value: DropsEximiaCo
+
+  StreamingStateTable:
+    Type: AWS::DynamoDB::Table
+    Properties:
+      AttributeDefinitions:
+        - AttributeName: "id"
+          AttributeType: "S"
+      KeySchema:
+        - AttributeName: "id"
+          KeyType: "HASH"
+      TableName: EximiaDropsStreamingState
+      BillingMode: PAY_PER_REQUEST
+      Tags:
+        - Key: Application
+          Value: DropsEximiaCo
+
+  NotificationTopic:
+    Type: AWS::SNS::Topic
+    DeletionPolicy: Retain
+    Properties:
+      DisplayName: !Ref SNSTopicName
+      TopicName: !Ref SNSTopicName
+      Tags:
+        - Key: Application
+          Value: DropsEximiaCo
+
+Outputs:
+  PlayerFunction:
+    Description: "Player Lambda Function ARN"
+    Value: !GetAtt PlayerFunction.Arn
+  CrawlerFunction:
+    Description: "Crawler Lambda Function ARN"
+    Value: !GetAtt CrawlerFunction.Arn
