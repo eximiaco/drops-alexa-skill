@@ -15,7 +15,7 @@ def get_episodes():
 
 
 def save_episodes(episodes):
-    table = dynamodb.Table("EximiaDropsEpisodes")
+    table = dynamodb.Table("TechAndBizEpisodes")
 
     for entry in episodes:
 
@@ -24,7 +24,7 @@ def save_episodes(episodes):
 
         table.update_item(
             Key={
-                "category": "drops",
+                "category": "techandbiz",
                 "pub": entry.pub_date.isoformat()
             },
             UpdateExpression="set title = :i, stitle = :s, description = :d, address = :u, ctype = :t",
@@ -40,7 +40,7 @@ def save_episodes(episodes):
 
 
 def lambda_handler(event, context):
-    print("Obtendo dados do Soundcloud")
+    print("Obtendo feed")
 
     try:
         episodes = get_episodes()
@@ -48,4 +48,4 @@ def lambda_handler(event, context):
     except Exception as e:
         notify_error(e)
 
-    print("Dados obtidos do Soundcloud")
+    print("Feed obtido")

@@ -1,7 +1,7 @@
 AWSTemplateFormatVersion: '2010-09-09'
 Transform: AWS::Serverless-2016-10-31
 Description: >
-  EximiaCo Drops 
+  TechAndBiz
 
 Globals:
   Function:
@@ -23,7 +23,7 @@ Resources:
     Properties:
       CodeUri: player/
       Handler: app.lambda_handler
-      Runtime: python3.7
+      Runtime: python3.8
       Environment:
         Variables:
           NOTIFICATIONS_TOPIC_ARN: !Ref NotificationTopic
@@ -40,14 +40,14 @@ Resources:
           Properties:
             SkillId: !Ref AlexaSkillId
       Tags:
-        Application: DropsEximiaCo
+        Application: TechAndBiz
 
   CrawlerFunction:
     Type: AWS::Serverless::Function 
     Properties:
       CodeUri: crawler/
       Handler: app.lambda_handler
-      Runtime: python3.7
+      Runtime: python3.8
       Environment:
         Variables:
           FEED_URI: https://feeds.soundcloud.com/users/soundcloud:users:784875019/sounds.rss
@@ -64,7 +64,7 @@ Resources:
             Schedule: "cron(0/60 * * * ? *)"
             Enabled: True
       Tags:
-        Application: DropsEximiaCo
+        Application: TechAndBiz
 
   EpisodesTable:
     Type: AWS::DynamoDB::Table
@@ -79,11 +79,11 @@ Resources:
           KeyType: "HASH"
         - AttributeName: "pub"
           KeyType: "RANGE"
-      TableName: EximiaDropsEpisodes
+      TableName: TechAndBizEpisodes
       BillingMode: PAY_PER_REQUEST
       Tags:
         - Key: Application
-          Value: DropsEximiaCo
+          Value: TechAndBiz
 
   StreamingStateTable:
     Type: AWS::DynamoDB::Table
@@ -94,11 +94,11 @@ Resources:
       KeySchema:
         - AttributeName: "id"
           KeyType: "HASH"
-      TableName: EximiaDropsStreamingState
+      TableName: TechAndBizStreamingState
       BillingMode: PAY_PER_REQUEST
       Tags:
         - Key: Application
-          Value: DropsEximiaCo
+          Value: TechAndBiz
 
   NotificationTopic:
     Type: AWS::SNS::Topic
@@ -108,7 +108,7 @@ Resources:
       TopicName: !Ref SNSTopicName
       Tags:
         - Key: Application
-          Value: DropsEximiaCo
+          Value: TechAndBiz
 
 Outputs:
   PlayerFunction:

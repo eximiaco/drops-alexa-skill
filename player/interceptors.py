@@ -38,7 +38,7 @@ class CatchAllExceptionHandler(AbstractExceptionHandler):
         logger.error(exception, exc_info=True)
         notify_error(exception)
 
-        speech = "Desculpe. Tive um problema para obter os dados do drops. Tente novamente mais tarde!"
+        speech = "Desculpe. Tive um problema para obter os dados do podcast. Tente novamente mais tarde!"
         handler_input.response_builder.speak(speech)
         # .ask(speech)
 

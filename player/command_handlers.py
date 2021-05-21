@@ -23,14 +23,14 @@ class LaunchRequestHandler(AbstractRequestHandler):
         first_time = handler_input.attributes_manager.persistent_attributes.get("playback").get("firstTime")
 
         if first_time:
-            speak_out = 'Olá, seja bem-vindo aos Drops da Exímia<emphasis level="strong">Cô</emphasis>. ' \
+            speak_out = 'Olá, seja bem-vindo ao Tech and Biz. ' \
                         'Para começar você pode escolher o episódio mais recente dizendo: O mais recente, ' \
                         'ou ainda pesquisar sobre algum tema específico iniciando a frase com:  ' \
                         'O episódio sobre.<break time="500ms"/> ' \
                         'Para mais informações, basta me pedir Ajuda. ' \
                         '<break time="500ms"/>Qual episódio você gostaria de ouvir?'
         else:
-            speak_out = 'Olá, seja bem-vindo de volta aos Drops da Exímia<emphasis level="strong">Cô</emphasis>. ' \
+            speak_out = 'Olá, seja bem-vindo de volta ao Tech And Biz. ' \
                         'Para qualquer dúvida, basta me pedir Ajuda. ' \
                         '<break time="500ms"/>Qual episódio você gostaria de ouvir?'
 
@@ -300,7 +300,7 @@ class FallbackHandler(AbstractRequestHandler):
 
     def handle(self, handler_input):
         speak_out = '''Desculpe, mas não entendi o seu comando. Você pode ouvir os comandos disponíveis 
-        no Drops da Exímia<emphasis level="strong">Cô</emphasis>, pedindo Ajuda'''
+        no Tech and Biz, pedindo Ajuda'''
         handler_input.response_builder.speak(speak_out).ask(speak_out)
 
         return handler_input.response_builder.response

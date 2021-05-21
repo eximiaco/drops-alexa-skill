@@ -12,11 +12,11 @@ class EpisodesProvider(object):
         self.dynamodb = boto3.resource("dynamodb", region_name="sa-east-1")
 
     def get_latest(self):
-        table = self.dynamodb.Table("EximiaDropsEpisodes")
+        table = self.dynamodb.Table("TechAndBizEpisodes")
 
         try:
             response = table.query(
-                KeyConditionExpression= Key('category').eq("drops") & Key('pub').gte("2000-01-01T00:00:00Z"),
+                KeyConditionExpression= Key('category').eq("techandbiz") & Key('pub').gte("2000-01-01T00:00:00Z"),
                 Limit=1,
                 ScanIndexForward=False
             )
@@ -30,11 +30,11 @@ class EpisodesProvider(object):
                 return None
 
     def get_first(self):
-        table = self.dynamodb.Table("EximiaDropsEpisodes")
+        table = self.dynamodb.Table("TechAndBizEpisodes")
 
         try:
             response = table.query(
-                KeyConditionExpression=Key('category').eq("drops") & Key('pub').lte("2999-01-01T00:00:00Z"),
+                KeyConditionExpression=Key('category').eq("techandbiz") & Key('pub').lte("2999-01-01T00:00:00Z"),
                 Limit=1
             )
         except ClientError as e:
@@ -47,7 +47,7 @@ class EpisodesProvider(object):
                 return None
 
     def search(self, episode_subject):
-        table = self.dynamodb.Table("EximiaDropsEpisodes")
+        table = self.dynamodb.Table("TechAndBizEpisodes")
 
         try:
             response = table.scan(
@@ -63,11 +63,11 @@ class EpisodesProvider(object):
                 return None
 
     def get(self, episode_pub):
-        table = self.dynamodb.Table("EximiaDropsEpisodes")
+        table = self.dynamodb.Table("TechAndBizEpisodes")
 
         try:
             response = table.query(
-                KeyConditionExpression=Key('category').eq("drops") & Key('pub').eq(episode_pub),
+                KeyConditionExpression=Key('category').eq("techandbiz") & Key('pub').eq(episode_pub),
                 Limit=1
             )
         except ClientError as e:
@@ -81,11 +81,11 @@ class EpisodesProvider(object):
                 return None
 
     def get_next(self, episode):
-        table = self.dynamodb.Table("EximiaDropsEpisodes")
+        table = self.dynamodb.Table("TechAndBizEpisodes")
 
         try:
             response = table.query(
-                KeyConditionExpression=Key('category').eq("drops") & Key('pub').gt(episode["pub"]),
+                KeyConditionExpression=Key('category').eq("techandbiz") & Key('pub').gt(episode["pub"]),
                 Limit=1
             )
         except ClientError as e:
@@ -99,11 +99,11 @@ class EpisodesProvider(object):
                 return None
 
     def get_previous(self, episode):
-        table = self.dynamodb.Table("EximiaDropsEpisodes")
+        table = self.dynamodb.Table("TechAndBizEpisodes")
 
         try:
             response = table.query(
-                KeyConditionExpression=Key('category').eq("drops") & Key('pub').lt(episode["pub"]),
+                KeyConditionExpression=Key('category').eq("techandbiz") & Key('pub').lt(episode["pub"]),
                 Limit=1,
                 ScanIndexForward=False
             )
